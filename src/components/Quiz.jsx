@@ -37,3 +37,29 @@ const questionsData = [
     answer: "media queries"
   }
 ];
+
+
+function Quiz() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  const handleAnswerClick = (selectedOption) => {
+    if (selectedOption === questionsData[currentQuestion].answer) {
+      setScore(score + 1);
+    }
+
+    const nextQuestion = currentQuestion + 1;
+
+    if (nextQuestion < questionsData.length) {
+      setCurrentQuestion(nextQuestion);
+    } else {
+      setShowResult(true);
+    }
+  };
+
+  const restartQuiz = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowResult(false);
+  };
