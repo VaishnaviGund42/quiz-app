@@ -13,3 +13,10 @@ body {
   width: 400px;
   text-align: center;
 }
+.quiz-container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+}
