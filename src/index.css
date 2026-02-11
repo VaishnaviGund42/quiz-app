@@ -6,3 +6,10 @@ body {
   align-items: center;
   height: 100vh;
 }
+.quiz-container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+}
