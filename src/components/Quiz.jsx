@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 
 const questionsData = [
   {
@@ -41,8 +41,16 @@ const questionsData = [
 
 function Quiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
+  
   const [showResult, setShowResult] = useState(false);
+
+  const [score, setScore] = useState(() => {
+    const savedScore = localStorage.getItem("score");
+    return savedScore ? JSON.parse(savedScore) : 0;
+  });
+    useEffect(() => {
+    localStorage.setItem("score", JSON.stringify(score));
+  }, [score]);
 
   const handleAnswerClick = (selectedOption) => {
     if (selectedOption === questionsData[currentQuestion].answer) {
@@ -63,6 +71,13 @@ function Quiz() {
     setScore(0);
     setShowResult(false);
   };
+ 
+
+  useEffect(() => {
+  localStorage.setItem("score", JSON.stringify(score));
+}, [score]);
+
+  
 
    return (
     <div className="quiz-container">
