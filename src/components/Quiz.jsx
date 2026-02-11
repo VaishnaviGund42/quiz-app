@@ -63,3 +63,35 @@ function Quiz() {
     setScore(0);
     setShowResult(false);
   };
+
+   return (
+    <div className="quiz-container">
+      <h1>Java & Web Development Quiz</h1>
+
+      {showResult ? (
+        <div>
+          <h2>Your Score: {score} / {questionsData.length}</h2>
+          <button onClick={restartQuiz}>Restart Quiz</button>
+        </div>
+      ) : (
+        <div>
+          <h3>
+            Question {currentQuestion + 1} / {questionsData.length}
+          </h3>
+          <p>{questionsData[currentQuestion].question}</p>
+
+          {questionsData[currentQuestion].options.map((option, index) => (
+            <button
+              key={index}
+              onClick={() => handleAnswerClick(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Quiz;
