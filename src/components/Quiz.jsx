@@ -1,65 +1,68 @@
-import { useState , useEffect} from "react";
-
+import { useState, useEffect } from "react";
 import questionsData from "./data";
-
 
 function Quiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  
   const [showResult, setShowResult] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isAnswered, setIsAnswered] = useState(false);
 
   const [score, setScore] = useState(() => {
     const savedScore = localStorage.getItem("score");
     return savedScore ? JSON.parse(savedScore) : 0;
   });
-    useEffect(() => {
+
+  useEffect(() => {
     localStorage.setItem("score", JSON.stringify(score));
   }, [score]);
 
-  const handleAnswerClick = (selectedOption) => {
-    if (selectedOption === questionsData[currentQuestion].answer) {
-      setScore(score + 1);
+  const handleAnswerClick = (option) => {
+    if (isAnswered) return;
+
+    setSelectedAnswer(option);
+    setIsAnswered(true);
+
+    if (option === questionsData[currentQuestion].answer) {
+      setScore((prev) => prev + 1);
     }
 
-    const nextQuestion = currentQuestion + 1;
+    setTimeout(() => {
+      const next = currentQuestion + 1;
 
-    if (nextQuestion < questionsData.length) {
-      setCurrentQuestion(nextQuestion);
-    } else {
-      setShowResult(true);
-    }
+      if (next < questionsData.length) {
+        setCurrentQuestion(next);
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+      } else {
+        setShowResult(true);
+      }
+    }, 1500);
   };
 
   const restartQuiz = () => {
     setCurrentQuestion(0);
     setScore(0);
     setShowResult(false);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+    localStorage.removeItem("score");
   };
 
-  
-
-    return (
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 p-4">
-      
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 text-center">
-        
+      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 text-center">
         <h1 className="text-3xl font-bold text-indigo-600 mb-6">
           Java & Web Development Quiz
         </h1>
 
         {showResult ? (
           <div className="space-y-6">
-            
             <h2 className="text-2xl font-semibold text-gray-700">
-              Your Score
+              Final Score
             </h2>
 
             <p className="text-4xl font-bold text-green-600">
               {score} / {questionsData.length}
-            </p>
-
-            <p className="text-lg text-gray-500">
-              {score >= 4 ? "Excellent Work! 🎉" : "Keep Practicing 💪"}
             </p>
 
             <button
@@ -68,17 +71,12 @@ function Quiz() {
             >
               Restart Quiz
             </button>
-
           </div>
         ) : (
           <div>
-            
             <div className="flex justify-between text-sm text-gray-500 mb-4">
               <span>
-                Question {currentQuestion + 1}
-              </span>
-              <span>
-                {questionsData.length}
+                Question {currentQuestion + 1} / {questionsData.length}
               </span>
             </div>
 
@@ -87,17 +85,35 @@ function Quiz() {
             </h3>
 
             <div className="space-y-3">
-              {questionsData[currentQuestion].options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswerClick(option)}
-                  className="w-full border border-indigo-400 text-indigo-600 py-2 rounded-lg hover:bg-indigo-500 hover:text-white transition duration-300"
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+              {questionsData[currentQuestion].options.map((option, index) => {
+                let buttonStyle =
+                  "w-full border py-2 rounded-lg transition duration-300 ";
 
+                if (isAnswered) {
+                  if (option === questionsData[currentQuestion].answer) {
+                    buttonStyle += "bg-green-500 text-white";
+                  } else if (option === selectedAnswer) {
+                    buttonStyle += "bg-red-500 text-white";
+                  } else {
+                    buttonStyle += "bg-gray-200";
+                  }
+                } else {
+                  buttonStyle +=
+                    "border-indigo-400 text-indigo-600 hover:bg-indigo-500 hover:text-white";
+                }
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswerClick(option)}
+                    className={buttonStyle}
+                    disabled={isAnswered}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
